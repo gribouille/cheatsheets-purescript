@@ -1,0 +1,217 @@
+\usemodule[vim]
+
+\mainlanguage[en]
+\setcharacterspacing[frenchpunctuation]
+\setuplayout[
+  margin=0mm,
+  footer=0mm,
+  width=288mm,
+  height=202mm,
+  backspace=4mm,
+  topspace=4mm,
+  top=0mm,
+  topdistance=0mm,
+  header=0mm,
+  headerdistance=0mm,
+  bottom=0mm
+]
+\setupcolors[state=start]
+\usecolors[xwi]
+\setuppapersize[A4,landscape]
+\setupbodyfont[DejaVu,sansserif,10pt]
+% Disable auto page numbering
+\setuppagenumbering[location=]
+\definevimtyping[HS][syntax=haskell]
+\definevimtyping[PS][syntax=purescript]
+\setuphead[section][textstyle=\tf,after={\blank[2mm]},before={\blank[3mm]}]
+
+\define[1]\legend{\framed[corner=06,roffset=2mm,frame=off,background=color,backgroundcolor=aliceblue,align=flushright,width=\textwidth]{\tfxx\inlineHS{#1}}}
+
+
+\starttext
+
+\title{Purescript - Prelude}
+
+% \showframe % for debug
+\startcolumns[n=3]
+
+
+\section{Monoid}
+
+\startHS
+class (Eq a) <= Ord a where
+    compare :: a -> a -> Ordering
+\stopHS
+
+\blank
+
+{\tfx
+\startHS
+(<>) :: Semigroup a => a -> a -> a
+\stopHS}
+
+
+\section{Foldable}
+
+\startHS
+class Foldable t where
+  foldMap :: Monoid m => (a -> m) -> t a -> m
+  foldr   :: (a -> b -> b) -> b -> t a -> b
+\stopHS
+
+\blank
+
+{\tfx
+\startHS
+traverse_ :: (a -> f b) -> t a -> f ()
+for_      ::  t a -> (a -> f b) -> f ()
+sequenceA_:: t (f a) -> f ()
+
+concat    :: t [a] -> [a]
+and       :: t Bool -> Bool
+or        :: t Bool -> Bool
+any       :: (a -> Bool) -> t a -> Bool
+all       :: (a -> Bool) -> t a -> Bool
+\stopHS}
+
+\legend{t :: Foldable, f :: Applicative}
+
+% ---------------------------------------------------------------------------- %
+\page[yes]
+% ---------------------------------------------------------------------------- %
+
+\section{Functor}
+
+\startHS
+class Functor f where
+  fmap :: (a -> b) -> f a -> f b
+\stopHS
+
+\blank
+
+{\tfx
+\startHS
+(<$)   :: a -> f b -> f a
+($>)   :: f a -> b -> f b
+(<$>)  :: (a -> b) -> f a -> f b
+(<&>)  :: f a -> (a -> b) -> f b
+void   :: f a -> f ()
+\stopHS}
+
+\legend{f :: Functor}
+
+
+\section{Applicative}
+
+\startHS
+class Functor f => Applicative f where
+  pure  :: a -> f a
+  (<*>) :: f (a -> b) -> f a -> f b
+  (*>)  :: f a -> f b -> f b
+  (<*)  :: f a -> f b -> f a
+  liftA2:: (a -> b -> c) -> f a -> f b -> f c
+\stopHS
+
+\blank
+
+{\tfx
+\startHS
+(<**>)  :: f a -> f (a -> b) -> f b
+
+liftA   :: (a -> b) -> f a -> f b
+liftA3  :: (a -> b -> c -> d) -> f a -> f b -> f c -> f d
+
+void    :: f a -> f ()
+forever :: f a -> f b
+when    :: Bool -> f () -> f ()
+unless  :: Bool -> f () -> f ()
+\stopHS}
+
+\legend{f :: Applicative}
+
+
+\section{Alternative}
+
+\startHS
+class Applicative f => Alternative f where
+  empty :: f a
+  (<|>) :: f a -> f a -> f a
+  some  :: f a -> f [a]
+  many  :: f a -> f [a]
+\stopHS
+
+\blank
+
+{\tfx
+\startHS
+optional :: f a -> f (Maybe a)
+guard    :: Bool -> f ()
+\stopHS}
+
+\legend{f :: Alternative}
+
+
+\section{Traversable}
+
+\startHS
+class (Functor t, Foldable t) => Traversable t where
+  traverse  :: (a -> f b) -> t a -> f (t b)
+  sequenceA :: t (f a) -> f (t a)
+  mapM      :: (a -> m b) -> t a -> m (t b)
+  sequence  :: t (m a) -> m (t a)
+\stopHS
+
+\blank
+
+{\tfx
+\startHS
+for :: t a -> (a -> f b) -> f (t b)
+\stopHS}
+
+\legend{f :: Applicative, t :: Traversable, m :: Monad}
+
+
+\section{Monad}
+
+\startHS
+class Applicative m => Monad m where
+  (>>=)  :: forall a b. m a -> (a -> m b) -> m b
+  (>>)   :: forall a b. m a -> m b -> m b
+  return :: a -> m a
+\stopHS
+
+\blank
+
+{\tfx
+\startHS
+mapM_       :: (a -> m b) -> t a -> m ()
+forM        :: t a -> (a -> m b) -> m (t b)
+forM_       :: t a -> (a -> m b) -> m ()
+sequence_   :: t (m a) -> m ()
+
+(=<<)       :: (a -> m b) -> m a -> m b
+(>=>)       :: (a -> m b) -> (b -> m c) -> a -> m c
+(<=<)       :: (b -> m c) -> (a -> m b) -> a -> m c
+
+join        :: m (m a) -> m a
+filterM     :: (a -> m Bool) -> [a] -> m [a]
+filterM     :: (a -> m Bool) -> [a] -> m [a]
+foldM       :: (b -> a -> m b) -> b -> t a -> m b
+foldM_      :: (b -> a -> m b) -> b -> t a -> m ()
+replicateM  :: Int -> m a -> m [a]
+replicateM_ :: Int -> m a -> m ()
+
+
+liftM       :: (a1 -> r) -> m a1 -> m r
+liftM2      :: (a1 -> a2 -> r) -> m a1 -> m a2 -> m r
+ap          :: m (a -> b) -> m a -> m b
+(<$!>)      :: (a -> b) -> m a -> m b
+\stopHS}
+
+\legend{f :: Applicative, t :: Traversable, m :: Monad}
+
+
+
+\stopcolumns
+
+\stoptext

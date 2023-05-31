@@ -1,0 +1,81 @@
+\environment slides
+
+% To enable the use of sample images in ConTeXt distrubtion
+\setupexternalfigures[location={local,global,default}]
+
+\starttext
+
+\setvariables
+    [metadata]
+    [
+      title={Creating slides in ConTeXt},
+      author={ConTeXt user},
+      date={Jan 13, 2013},
+      location={ConTeXt Interactive Tutorial},
+    ]
+
+\startslide[title={First Slide}]
+
+\startitemize
+    \starthead {First bullet}
+      Avoid using too many bullets. It is better to use paragraphs.
+      \startitemize
+        \item Especially nested bullet lists
+        \item That make it hard to understand the main point
+      \stopitemize
+    \stophead
+
+    \starthead {Second bullet}
+      Nonetheless sometimes you are stuck at using bullets. In such cases, make
+      sure that the bullets look nice.
+    \stophead
+\stopitemize
+
+\stopslide
+
+\startslide[title={Sample Slide}]
+
+  \input knuth
+
+\stopslide
+
+\startslide[title={Some math}]
+
+  Here is an example with display math with a long line preceeding it
+  \startformula
+    f(x) =  a_i x^i
+  \stopformula
+  and a long line following the display math.
+
+\stopslide
+
+\startslide[title={Horizontal Image}]
+  \startplacefigure
+    \externalfigure[hacker][horizontal]
+  \stopplacefigure
+\stopslide
+
+\startslide[title={Horizontal Image with text}]
+  \input ward
+
+  \startplacefigure
+    \externalfigure[hacker][horizontal]
+  \stopplacefigure
+\stopslide
+
+\startslide[title={Vertical Image}]
+  \startplacefigure
+    \externalfigure[mill][vertical]
+  \stopplacefigure
+\stopslide
+
+\startslide[title={Vertical Image with text}]
+  \startplacefigure[location=left]
+    \externalfigure[mill][vertical]
+  \stopplacefigure
+  \input ward
+
+\stopslide
+
+
+\stoptext
