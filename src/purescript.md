@@ -43,6 +43,10 @@ getRange _ = { lowest :  bottom
              }
              
 -- solution 2
+getRange :: forall a. (Bounded a) -> Proxy a => {lowest :: a , highest :: a }
+getRange _ = { lowest :  bottom
+             ,  highest :  top
+             }
 ```
 
 
